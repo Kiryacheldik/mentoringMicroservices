@@ -19,5 +19,13 @@ services:
       - "4571:4571"
     volumes:
       - ./aws/init_aws.sh:/docker-entrypoint-initaws.d/init_aws.sh
+  resources-rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 volumes:
   database-data:

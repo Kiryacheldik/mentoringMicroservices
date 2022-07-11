@@ -1,9 +1,13 @@
-package com.mentoring.microservices.processorservice.dto;
+package com.mentoring.microservices.processorservice.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class SongDto {
     private Long resourceId;
@@ -11,5 +15,5 @@ public class SongDto {
     private String artist;
     private String album;
     private Long length;
-    private Integer year;
+    private String year;
 }

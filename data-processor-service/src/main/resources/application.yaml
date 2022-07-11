@@ -1,12 +1,7 @@
-#datasource configurations
+server:
+  port: 8082
+
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/resourceDB
-    username: admin
-    password: 1234
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    generate-ddl: true
   servlet:
     multipart:
       max-file-size: 10MB
@@ -25,12 +20,3 @@ spring:
       resource-create-routing-key: resource-create.routingkey1
       resource-get-id-routing-key: resource-get-id.routingkey2
       resource-get-content-routing-key: resource-get-content.routingkey3
-
-config:
-  aws:
-    region: us-east-1
-    s3:
-      url: http://127.0.0.1:4566
-      bucket-name: resourcebucketname
-#      access-key: localstack
-#      secret-key: localstack
