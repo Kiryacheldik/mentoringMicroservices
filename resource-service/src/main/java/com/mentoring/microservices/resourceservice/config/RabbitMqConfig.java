@@ -17,8 +17,14 @@ public class RabbitMqConfig {
     private String resourceGetIdQueue;
     @Value("${spring.rabbitmq.routing-keys.resource-get-id-routing-key}")
     private String resourceGetIdRoutingKey;
-    @Value("${spring.rabbitmq.exchange}")
+    @Value("${spring.rabbitmq.exchanges.exchange}")
     private String exchange;
+    @Value("${spring.rabbitmq.queues.resource-dlq}")
+    private String resourceDlq;
+    @Value("${spring.rabbitmq.routing-keys.resource-dlq-routing-key}")
+    private String resourceDlqRoutingKey;
+    @Value("${spring.rabbitmq.exchanges.dlq-exchange}")
+    private String exchangeDlq;
     @Value("${spring.rabbitmq.host}")
     public String host;
     @Value("${spring.rabbitmq.username}")
@@ -28,7 +34,10 @@ public class RabbitMqConfig {
 
     @Bean
     public Queue resourceGetIdQueue() {
-        return new Queue(resourceGetIdQueue, true);
+        return QueueBuilder.durable(resourceGetIdQueue)
+                .withArgument("x-dead-letter-exchange", exchangeDlq)
+                .withArgument("x-dead-letter-routing-key", resourceDlqRoutingKey)
+                .build();
     }
 
     @Bean
@@ -42,6 +51,25 @@ public class RabbitMqConfig {
                 .bind(resourceGetIdQueue())
                 .to(resourceExchange())
                 .with(resourceGetIdRoutingKey)
+                .noargs();
+    }
+
+    @Bean
+    public Queue resourceDlqQueue() {
+        return new Queue(resourceDlq, true);
+    }
+
+    @Bean
+    public Exchange resourceDlqExchange() {
+        return ExchangeBuilder.directExchange(exchangeDlq).durable(true).build();
+    }
+
+    @Bean
+    public Binding resourceDlqBinding() {
+        return BindingBuilder
+                .bind(resourceDlqQueue())
+                .to(resourceDlqExchange())
+                .with(resourceDlqRoutingKey)
                 .noargs();
     }
 

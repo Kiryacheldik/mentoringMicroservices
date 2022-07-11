@@ -29,7 +29,7 @@ public class RabbitMqService {
 
     @Value("${spring.rabbitmq.queues.resource-get-content-queue}")
     private String resourceGetContentQueue;
-    @Value("${spring.rabbitmq.exchange}")
+    @Value("${spring.rabbitmq.exchanges.exchange}")
     private String resourceExchange;
     @Value("${spring.rabbitmq.routing-keys.resource-get-id-routing-key}")
     private String resourceGetIdRoutingKey;

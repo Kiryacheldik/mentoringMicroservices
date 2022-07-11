@@ -20,8 +20,14 @@ public class RabbitMqConfig {
     private String resourceCreatedRoutingKey;
     @Value("${spring.rabbitmq.routing-keys.resource-get-content-routing-key}")
     private String resourceGetContentRoutingKey;
-    @Value("${spring.rabbitmq.exchange}")
+    @Value("${spring.rabbitmq.exchanges.exchange}")
     private String exchange;
+    @Value("${spring.rabbitmq.queues.resource-dlq}")
+    private String resourceDlq;
+    @Value("${spring.rabbitmq.routing-keys.resource-dlq-routing-key}")
+    private String resourceDlqRoutingKey;
+    @Value("${spring.rabbitmq.exchanges.dlq-exchange}")
+    private String exchangeDlq;
     @Value("${spring.rabbitmq.username}")
     private String username;
     @Value("${spring.rabbitmq.password}")
@@ -31,17 +37,42 @@ public class RabbitMqConfig {
 
     @Bean
     public Queue resourceCreatedQueue() {
-        return new Queue(resourceCreatedQueue, true);
+        return QueueBuilder.durable(resourceCreatedQueue)
+                .withArgument("x-dead-letter-exchange", exchangeDlq)
+                .withArgument("x-dead-letter-routing-key", resourceDlqRoutingKey)
+                .build();
     }
 
     @Bean
     public Queue resourceGetContentQueue() {
-        return new Queue(resourceGetContentQueue, true);
+        return QueueBuilder.durable(resourceGetContentQueue)
+                .withArgument("x-dead-letter-exchange", exchangeDlq)
+                .withArgument("x-dead-letter-routing-key", resourceDlqRoutingKey)
+                .build();
     }
 
     @Bean
     public Exchange resourceExchange() {
         return ExchangeBuilder.directExchange(exchange).durable(true).build();
+    }
+
+    @Bean
+    public Queue resourceDlqQueue() {
+        return new Queue(resourceDlq, true);
+    }
+
+    @Bean
+    public Exchange resourceDlqExchange() {
+        return ExchangeBuilder.directExchange(exchangeDlq).durable(true).build();
+    }
+
+    @Bean
+    public Binding resourceDlqBinding() {
+        return BindingBuilder
+                .bind(resourceDlqQueue())
+                .to(resourceDlqExchange())
+                .with(resourceDlqRoutingKey)
+                .noargs();
     }
 
     @Bean

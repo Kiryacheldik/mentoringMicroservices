@@ -27,7 +27,7 @@ public class ResourceService {
 
     @Value("${config.aws.s3.bucket-name}")
     private String bucketName;
-    @Value("${spring.rabbitmq.exchange}")
+    @Value("${spring.rabbitmq.exchanges.exchange}")
     private String exchange;
     @Value("${spring.rabbitmq.routing-keys.resource-create-routing-key}")
     private String resourceCreateRoutingKey;

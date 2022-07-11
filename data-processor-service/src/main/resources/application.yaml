@@ -11,12 +11,24 @@ spring:
     password: admin
     port: 15672
     username: admin
-    exchange: resource-create.exchange
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 3s
+          max-attempts: 6
+          max-interval: 10s
+          multiplier: 2
+    exchanges:
+      exchange: resource-create.exchange
+      dlq-exchange: resource-create-dlq.exchange
     queues:
       resource-create-queue: resource-create
       resource-get-id-queue: resource-get-id
       resource-get-content-queue: resource-get-content
+      resource-dlq: resource-dlq
     routing-keys:
       resource-create-routing-key: resource-create.routingkey1
       resource-get-id-routing-key: resource-get-id.routingkey2
       resource-get-content-routing-key: resource-get-content.routingkey3
+      resource-dlq-routing-key: resource-dlq.routingkey4
