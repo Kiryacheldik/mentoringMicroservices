@@ -7,6 +7,7 @@ import com.mentoring.microservices.resourceservice.mapper.ResourceRequestMapper;
 import com.mentoring.microservices.resourceservice.mapper.ResourceResponseMapper;
 import com.mentoring.microservices.resourceservice.repository.ResourceRepository;
 import lombok.SneakyThrows;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -26,19 +27,25 @@ public class ResourceService {
 
     @Value("${config.aws.s3.bucket-name}")
     private String bucketName;
+    @Value("${spring.rabbitmq.exchanges.exchange}")
+    private String exchange;
+    @Value("${spring.rabbitmq.routing-keys.resource-create-routing-key}")
+    private String resourceCreateRoutingKey;
 
     @Autowired
-    public ResourceService(ResourceRepository repository, ResourceRequestMapper requestMapper, ResourceResponseMapper responseMapper, S3Client s3Client) {
+    public ResourceService(ResourceRepository repository, ResourceRequestMapper requestMapper, ResourceResponseMapper responseMapper, S3Client s3Client, RabbitTemplate rabbitTemplate) {
         this.repository = repository;
         this.requestMapper = requestMapper;
         this.responseMapper = responseMapper;
         this.s3Client = s3Client;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     private final ResourceRepository repository;
     private final ResourceRequestMapper requestMapper;
     private final ResourceResponseMapper responseMapper;
     private final S3Client s3Client;
+    private final RabbitTemplate rabbitTemplate;
 
     public List<ResourceCreateResponse> getResourceList() {
         throw new UnsupportedOperationException();
@@ -61,7 +68,11 @@ public class ResourceService {
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(resourceRequest.getFile().getBytes()));
         // save in DB
         final Resource resource = repository.save(requestMapper.toEntity(resourceRequest));
-        return responseMapper.toDto(resource);
+        final ResourceCreateResponse response = responseMapper.toDto(resource);
+        response.setResourceBytes(resourceRequest.getFile().getBytes());
+        // send to mq
+        rabbitTemplate.convertAndSend(exchange, resourceCreateRoutingKey, response.getId());
+        return response;
     }
 
     public void deleteResource(Long id) {
