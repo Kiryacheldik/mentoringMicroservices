@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS resource (
+   id INT PRIMARY KEY,
+   location VARCHAR(1024) NOT NULL
+);

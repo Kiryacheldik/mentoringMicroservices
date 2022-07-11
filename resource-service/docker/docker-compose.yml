@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  resources_db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=resourceDB
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - ./db/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - database-data:/var/lib/postgresql/data/
+  resources-localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    volumes:
+      - ./aws/init_aws.sh:/docker-entrypoint-initaws.d/init_aws.sh
+volumes:
+  database-data:

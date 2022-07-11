@@ -1,0 +1,22 @@
+#datasource configurations
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/resourceDB
+    username: admin
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    generate-ddl: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+config:
+  aws:
+    region: us-east-1
+    s3:
+      url: http://127.0.0.1:4566
+      bucket-name: resourcebucketname
+#      access-key: localstack
+#      secret-key: localstack

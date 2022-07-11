@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS song (
+   id INT PRIMARY KEY,
+   name VARCHAR(1024) NOT NULL,
+   artist VARCHAR(1024) NOT NULL,
+   album VARCHAR(1024) NOT NULL,
+   length INT NOT NULL,
+   resource_id INT NOT NULL,
+   year INT NOT NULL
+);

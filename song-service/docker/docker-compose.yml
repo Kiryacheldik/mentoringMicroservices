@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  songs_db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=songDB
+    ports:
+      - "5455:5432"
+    restart: always
+    volumes:
+      - ./db/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - database-data:/var/lib/postgresql/data/
+volumes:
+  database-data:

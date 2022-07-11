@@ -1,0 +1,12 @@
+server:
+  port: 8081
+
+#datasource configurations
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/songDB
+    username: admin
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    generate-ddl: true
