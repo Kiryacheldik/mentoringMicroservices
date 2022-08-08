@@ -1,6 +1,6 @@
 package com.mentoring.microservices.processorservice.util;
 
-import com.mentoring.microservices.processorservice.dto.SongDto;
+import com.mentoring.microservices.processorservice.entity.SongDto;
 import lombok.SneakyThrows;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -37,11 +37,11 @@ public class SongDataParser {
         }
 
         return SongDto.builder()
-                .name(songInfo.get())
-                .artist(songInfo.get())
-                .album(songInfo.get())
-                .length(Long.parseLong(songInfo.get()))
-                .year(Integer.parseInt(songInfo.get()))
+                .name(songInfo.get("title"))
+                .artist(songInfo.get("meta:author"))
+                .album(songInfo.get("xmpDM:album"))
+                .length(Long.parseLong(songInfo.get("samplerate")))
+                .year(songInfo.get("xmpDM:releaseDate"))
                 .build();
     }
 }
